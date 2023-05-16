@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+</head>
+<body style="background-image: url(./dark-background.png);">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+
+    <script>
+        const socket = io("http://localhost:5000")
+    </script>
+
+    <h1 class="text-center" style="margin-top: 10%;color: white;">Sign Up</h1>
+    <form id="signupForm" method="post">
+        <div class="col-md-3 mx-auto" style="margin-top: 5%;">
+            <div class="text-center">
+                <input type="text" id="name" name="name" class="form-control mb-2 rounded-0 bg-light" autofocus placeholder="Name">
+                <input type="email" id="email" name="email" class="form-control mb-2 rounded-0 bg-light" placeholder="Email">
+                <input type="password" id="password" name="password" class="form-control mb-2 rounded-0 bg-light" placeholder="Password">
+                <button class="btn btn-primary rounded-0 w-100 mt-3" onclick="signUp()">Sign Up</button>
+            </div>
+        </div>
+    </form>
+
+
+    <p class="text-center fs-6" style="text-align: center; margin-top: 20px;color: white;">Have An Account? <a href="/login.html">Log In</a></p>
+    <p class="text-center fs-3" style="color: #dc3545;" id="err"></p>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", function (event){
+            event.preventDefault()
+
+            const name = document.getElementById("name").value
+            const email = document.getElementById("email").value
+            const password = document.getElementById("password").value
+            const err_message = document.getElementById("err")
+
+            if (name == "" || email == "" || password == ""){
+                err_message.textContent = "Invalid Name Or Email Or Password"
+            }
+
+            const data = {
+                name:name,
+                email:email,
+                password:password
+            }
+
+            fetch("/sign_up", {
+                method:"POST",
+                headers:{
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(responseData => {
+                if (responseData.status == "sign_up_success"){
+                    window.location.href = "/login.html"
+                }else{
+                    alert("User Already Exist")
+                    window.location.href = "/sign_up.html"
+                }
+
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        })
+
+
+        // function signUp(){
+        //     const name = document.getElementById("name")
+        //     const email = document.getElementById("email")
+        //     const password = document.getElementById("password")
+        //     const err = document.getElementById("err")
+
+        //     if (name != "" && email != "" && password != ""){
+        //         socket.emit("sign_up", name, email, password)
+                
+        //         socket.on("signUp_success", () => {
+        //             window.location.href = "/home.html"
+        //         })
+
+        //         socket.on("signUp_failed", () => {
+        //             err_message.textContent = "Plase Enter A Valid Name OR Email OR Password"
+        //         })
+
+        //     }else{
+        //         err.textContent = "Plase Enter A Valid Name OR Email OR Password"
+        //     }
+        // }
+    </script>
+
+</body>
+</html>

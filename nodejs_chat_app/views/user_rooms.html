@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>Chat App</title>
+</head>
+<body style="background-image: url('./dark-background.png');background-size: cover;background-repeat: no-repeat;">
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+    
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a style="color: white;" class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a style="color: white;" class="nav-link" href="/user_rooms.html">Your Rooms</a>
+              </li>
+              <li class="nav-item">
+                <a style="color: white;" class="nav-link" href="/logout.html">Logout</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <form id="deleteRoomForm" method="post">
+        <button class="btn btn-primary" style="margin-top: 9%; margin-left: 25%;">Delete Room</button>
+      </form>
+      
+      <input type="text" id="delete_room_code" class="form-control" style="width: 300px; margin-left: 35%; margin-top: -2.5%;" placeholder="Enter The Room You Want To Delete: ">
+
+    <form id="CreateRoomForm" method="post">
+      <button class="btn btn-primary" style="margin-top: -4%; margin-left: 67.8%;">+Add Room</button>
+    </form>
+
+        <div id="rooms" style="border: white 2px solid; width: 50%; border-radius: 5px; margin-top: 1%; padding: 5px;" class="text-center mx-auto">
+
+            <div id="room" style="border: rgb(67, 67, 67) solid 2px; color: white; border-radius: 5px; opacity: 0; margin-bottom: 20px; margin-top: -10px; height: 50px;">
+                <h6 id="members" style="margin-right: 40%; display: inline; margin-top: 10px;"></h6>
+                <h6 id="room_code" style="margin-right: 10%; display: inline; margin-top: 10px;"></h6>
+            </div>
+
+        </div>
+
+
+    <script>
+      fetch("/user_rooms", {
+        method: "POST",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({status:"want_user_rooms"})
+        
+      })
+      .then(response => response.json())
+      .then(responseData => {
+        if (responseData.status == "no_rooms_found"){
+          document.getElementById("rooms").innerHTML = "<h1 style='color: white;'>No Rooms Found</h1>"
+
+        }else{
+          for (let i = 0; i < responseData.status.length; i++){
+            createRoomDiv(responseData.status[i].members, responseData.status[i].room_code)
+          }
+
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+      function createRoomDiv(members, roomCode){
+        let roomDiv = document.getElementById("room").cloneNode(true)
+        let roomsDiv = document.getElementById("rooms")
+
+        roomDiv.removeAttribute("id")
+        
+        let membersId = roomDiv.querySelector("#members")
+        let room_code = roomDiv.querySelector("#room_code")
+
+        membersId.textContent = "members: " + members
+        room_code.textContent = "Room Code: " + roomCode
+
+        roomDiv.style.opacity = 1
+
+        roomsDiv.appendChild(roomDiv)
+
+      }
+
+      document.getElementById("CreateRoomForm").addEventListener("submit", function (event) {
+        event.preventDefault()
+
+        fetch("/create_room", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({status:"want_room"})
+        })
+        .then(response => response.json())
+        .then(responseData => {
+          if (responseData.status == "error"){
+            alert("Error While Creating The Room")
+          }else{
+            window.location.href = responseData.status
+          }
+        })
+
+      })
+
+      document.getElementById("deleteRoomForm").addEventListener("submit", function (event){
+        event.preventDefault()
+
+        const roomCodeToDelete = document.getElementById("delete_room_code").value
+
+        fetch("delete_room", {
+          method: "POST",
+          headers:{
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({room_code: roomCodeToDelete})
+        })
+        .then(response => response.json())
+        .then(responseData => {
+          if (responseData.status == "error"){
+            alert("Error While Deleting The Room")
+          }
+        })
+
+      })
+
+
+    </script>
+      
+</body>
+</html>

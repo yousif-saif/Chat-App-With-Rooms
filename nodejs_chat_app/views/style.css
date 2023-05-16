@@ -1,0 +1,45 @@
+
+h1{
+    color: white;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center;
+  }
+
+.navbar-nav .nav-link {
+    font-size: 20px;
+    margin: 0 10px;
+}
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        margin-left: 0%;
+    }
+    100% {
+        opacity: 1;
+        margin-left: 20%;
+    }
+}
+
+@keyframes fadeIn2 {
+    0% {
+        opacity: 0;
+        margin-left: -10%;
+    }
+    100% {
+        opacity: 1;
+        margin-left: 6%;
+    }
+}
+
+
+.animated-text {
+    animation: fadeIn 1s ease-in;
+
+}
+
+.animated-text2{
+    animation: fadeIn2 1s ease-in;
+}

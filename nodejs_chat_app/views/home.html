@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <title>Chat App</title>
+</head>
+
+<body style="background-image: url('./dark-background.png');background-size: cover;background-repeat: no-repeat;">
+
+    <nav class="navbar navbar-expand-lg">
+      <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+  
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a style="color: white;" class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a style="color: white;" class="nav-link" href="/user_rooms.html">Your Rooms</a>
+            </li>
+            <li class="nav-item">
+              <a style="color: white;" class="nav-link" href="/logout.html">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var navbarToggler = document.querySelector('.navbar-toggler');
+          var navbarCollapse = document.querySelector('.navbar-collapse');
+    
+          navbarToggler.addEventListener('click', function() {
+            navbarCollapse.classList.toggle('show');
+          });
+        });
+      </script>
+
+
+    <h1 class="animated-text" style=" width: 20%; margin-left: 20%; margin-top: 10%;font-size: 80px;">Use Our App Safely</h1>
+
+    <form id="codeFrom" method="post">
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-sm-4">
+                    <h1 style="margin-top: -260px;margin-left: 6%;width: 90%;" class="animated-text2">Enter the code for the chat room:</h1>
+                    <input id="code" type="text" class="col-sm-8 rounded-2 form-control animated-text2" style="height: 50px;width: 78%; margin-top: 50px;margin-left: 6%;" placeholder="Enter The Code For The Room:">
+                    <br>
+                    <button class="btn btn-primary animated-text2" style="margin-left: 6%;">Enter Room</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+
+        document.getElementById("codeFrom").addEventListener("submit", function (event){
+            event.preventDefault()
+
+            const code = document.getElementById("code").value
+
+            const data = {
+                code: code
+            }
+
+            fetch("/enter_room", {
+                method:"POST",
+                headers:{
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(responseData => {
+                if (responseData.status == "room_not_found"){
+                    alert("There is no room with the code: " + code)
+                    
+                }else{
+                    window.location.href = responseData.status
+
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
+        })
+    </script>
+
+</body>
+</html>
